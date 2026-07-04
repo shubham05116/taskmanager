@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import logging
 
-from app.core.config import settings, get_allowed_origins
+from app.core.config import settings
 from app.db.database import engine, Base, create_enum_types
 from app.api.routes import auth, users, projects, tasks, teams, notifications
 from app.websockets.manager import websocket_router
@@ -35,7 +35,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=get_allowed_origins(),
+    allow_origins=settings.allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

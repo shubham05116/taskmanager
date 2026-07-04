@@ -13,7 +13,6 @@ security = HTTPBearer()
 
 
 def _to_bytes(password: str) -> bytes:
-    """Encode password to bytes and truncate to bcrypt's 72-byte limit."""
     return password.encode("utf-8")[:72]
 
 

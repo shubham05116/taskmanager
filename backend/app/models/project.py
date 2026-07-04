@@ -18,7 +18,10 @@ class Project(Base):
     name = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
     color = Column(String(7), default="#6366f1")
-    status = Column(SAEnum(ProjectStatus, name="projectstatus", create_type=False), default=ProjectStatus.ACTIVE)
+    status = Column(
+        SAEnum(ProjectStatus, name="projectstatus", create_type=False, values_callable=lambda x: [e.value for e in x]),
+        default=ProjectStatus.ACTIVE
+    )
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     is_public = Column(Boolean, default=False)
     due_date = Column(DateTime(timezone=True), nullable=True)
