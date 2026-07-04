@@ -25,7 +25,6 @@ class Base(DeclarativeBase):
 
 
 async def create_enum_types(conn):
-    """Create all PostgreSQL ENUM types safely — skips if already exists."""
     enums = [
         ("userrole",      ["admin", "member", "viewer"]),
         ("projectstatus", ["active", "archived", "completed"]),
@@ -35,12 +34,15 @@ async def create_enum_types(conn):
     ]
     for name, values in enums:
         vals = ", ".join(f"'{v}'" for v in values)
-        await conn.execute(text(
-            f"DO $$ BEGIN "
-            f"CREATE TYPE {name} AS ENUM ({vals}); "
-            f"EXCEPTION WHEN duplicate_object THEN NULL; "
-            f"END $$;"
-        ))
+        await conn.execute(text(f"""
+            DO $$
+            BEGIN
+                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = '{name}') THEN
+                    CREATE TYPE {name} AS ENUM ({vals});
+                END IF;
+            END
+            $$;
+        """))
 
 
 async def get_db():

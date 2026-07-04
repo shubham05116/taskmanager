@@ -26,8 +26,16 @@ class Task(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(500), nullable=False)
     description = Column(Text, nullable=True)
-    status = Column(SAEnum(TaskStatus, name="taskstatus", create_type=False), default=TaskStatus.TODO, nullable=False)
-    priority = Column(SAEnum(TaskPriority, name="taskpriority", create_type=False), default=TaskPriority.MEDIUM, nullable=False)
+    status = Column(
+        SAEnum(TaskStatus, name="taskstatus", create_type=False, values_callable=lambda x: [e.value for e in x]),
+        default=TaskStatus.TODO,
+        nullable=False
+    )
+    priority = Column(
+        SAEnum(TaskPriority, name="taskpriority", create_type=False, values_callable=lambda x: [e.value for e in x]),
+        default=TaskPriority.MEDIUM,
+        nullable=False
+    )
     project_id = Column(Integer, ForeignKey("projects.id"), nullable=False)
     assignee_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     creator_id = Column(Integer, ForeignKey("users.id"), nullable=False)

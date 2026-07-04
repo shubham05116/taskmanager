@@ -30,7 +30,11 @@ class TeamMember(Base):
     id = Column(Integer, primary_key=True, index=True)
     team_id = Column(Integer, ForeignKey("teams.id"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    role = Column(SAEnum(TeamRole, name="teamrole", create_type=False), default=TeamRole.MEMBER, nullable=False)
+    role = Column(
+        SAEnum(TeamRole, name="teamrole", create_type=False, values_callable=lambda x: [e.value for e in x]),
+        default=TeamRole.MEMBER,
+        nullable=False
+    )
     joined_at = Column(DateTime(timezone=True), server_default=func.now())
 
     team = relationship("Team", back_populates="members")
